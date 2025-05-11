@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { toast, Toaster } from "sonner";
-import { Loader2 } from "lucide-react";
 import type { Accident } from "../types";
 import { AccidentDetailDialog } from "../components/accidents/AccidentDetailDialog";
 import { AccidentTableSkeleton } from "../components/accidents/AccidentSkeletons";
