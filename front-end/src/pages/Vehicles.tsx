@@ -1,24 +1,38 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { Vehicle } from "../types";
+import { Loader2 } from "lucide-react";
 
 export const VehiclesPage = () => {
   const [viewMode, setViewMode] = useState<"list" | "grid">("list");
-  const [vehicles, setVehicles] = useState<Vehicle[]>([
-    {
-      vehicleId: "VEH-1234",
-      vehicleName: "Toyota Camry",
-      driverName: "John Doe",
-      imageUrl: "https://example.com/vehicle-image.jpg",
-      sensorData: {
-        acceleration: { x: 0, y: 0, z: 0 },
-        gyroscope: { pitch: 0, roll: 0, yaw: 0 },
-        gps: { latitude: 0, longitude: 0, speed: 0 },
-      },
-      hasAccident: false,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    },
-  ]);
+  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState<
+    "all" | "active" | "warning" | "critical"
+  >("all");
+
+  useEffect(() => {
+    const fetchVehicles = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(
+          "https://integrated-project-mf1f.onrender.com/api/vehicles"
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch vehicles");
+        }
+        const data = await response.json();
+        setVehicles(data.data);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "An error occurred");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchVehicles();
+  }, []);
 
   const getVehicleStatus = (vehicle: Vehicle) => {
     if (vehicle.hasAccident) return "Critical";
@@ -38,6 +52,37 @@ export const VehiclesPage = () => {
         return "bg-gray-500";
     }
   };
+
+  const filteredVehicles = vehicles.filter((vehicle) => {
+    const matchesSearch =
+      vehicle.vehicleName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      vehicle.driverName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      vehicle.vehicleId.toLowerCase().includes(searchTerm.toLowerCase());
+
+    if (statusFilter === "all") return matchesSearch;
+
+    const vehicleStatus = getVehicleStatus(vehicle).toLowerCase();
+    return matchesSearch && vehicleStatus === statusFilter;
+  });
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-[calc(100vh-12rem)]">
+        <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-[calc(100vh-12rem)]">
+        <div className="text-red-500 text-center">
+          <p className="text-xl font-semibold mb-2">Error loading vehicles</p>
+          <p>{error}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -69,10 +114,16 @@ export const VehiclesPage = () => {
             <input
               type="text"
               placeholder="Search vehicles..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
               className="w-64 px-4 py-2 bg-[#1E1E1E] rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
-          <select className="px-4 py-2 bg-[#1E1E1E] rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <select
+            className="px-4 py-2 bg-[#1E1E1E] rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value as any)}
+          >
             <option value="all">All Statuses</option>
             <option value="active">Active</option>
             <option value="warning">Warning</option>
@@ -94,18 +145,18 @@ export const VehiclesPage = () => {
             </tr>
           </thead>
           <tbody>
-            {vehicles.map((vehicle) => {
+            {filteredVehicles.map((vehicle) => {
               const status = getVehicleStatus(vehicle);
               return (
                 <tr
                   key={vehicle.vehicleId}
-                  className="border-t border-[#2E2E2E]"
+                  className="border-t border-[#2E2E2E] hover:bg-[#252525] transition-colors"
                 >
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2">
                       <div
                         className={`w-2 h-2 rounded-full ${getStatusColor(
-                          status
+                          status as "Active" | "Warning" | "Critical"
                         )}`}
                       />
                       <span className="text-sm text-white">{status}</span>
@@ -113,12 +164,19 @@ export const VehiclesPage = () => {
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
-                      <img
-                        src={vehicle.imageUrl}
-                        alt={vehicle.vehicleName}
-                        className="w-10 h-10 rounded-full object-cover"
-                      />
-                      <span className="text-white">{vehicle.vehicleName}</span>
+                      <div className="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center">
+                        <span className="text-white text-sm">
+                          {vehicle.vehicleName.substring(0, 2)}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-white block">
+                          {vehicle.vehicleName}
+                        </span>
+                        <span className="text-gray-400 text-sm">
+                          {vehicle.vehicleId}
+                        </span>
+                      </div>
                     </div>
                   </td>
                   <td className="px-6 py-4 text-white">{vehicle.driverName}</td>

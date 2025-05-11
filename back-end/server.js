@@ -8,6 +8,7 @@ const swaggerSpec = require("./swagger");
 // Import routes
 const vehicleRoutes = require("./routes/vehicleRoutes");
 const accidentRoutes = require("./routes/accidentRoutes");
+const cors = require("cors");
 
 // Load environment variables
 dotenv.config();
@@ -18,6 +19,9 @@ const app = express();
 // Middleware
 app.use(bodyParser.json());
 app.use(express.json());
+
+// Welcome route
+app.use(cors());
 
 // Welcome route
 app.get("/", (req, res) => {
