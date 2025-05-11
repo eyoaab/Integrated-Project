@@ -55,6 +55,7 @@ export const VehiclesPage = ({
 
   const updateVehicleData = async (vehicleId: string) => {
     try {
+      console.log(vehicleId);
       const response = await fetch(
         "https://integrated-project-mf1f.onrender.com/api/vehicles"
       );
