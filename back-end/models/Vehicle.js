@@ -6,13 +6,6 @@ const vehicleSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      validate: {
-        validator: function (v) {
-          return /^VEH-\d{4}$/.test(v);
-        },
-        message: (props) =>
-          `${props.value} is not a valid vehicle ID. Format should be VEH-XXXX where XXXX is a 4-digit number.`,
-      },
     },
     vehicleName: {
       type: String,
