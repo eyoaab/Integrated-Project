@@ -40,12 +40,17 @@ const swaggerDefinition = {
     schemas: {
       Vehicle: {
         type: "object",
-        required: ["vehicleId", "driverName", "imageUrl"],
+        required: ["vehicleId", "vehicleName", "driverName", "imageUrl"],
         properties: {
           vehicleId: {
             type: "string",
             description: "Unique identifier for the vehicle (format: VEH-XXXX)",
             example: "VEH-1234",
+          },
+          vehicleName: {
+            type: "string",
+            description: "Name or model of the vehicle",
+            example: "Toyota Camry",
           },
           driverName: {
             type: "string",

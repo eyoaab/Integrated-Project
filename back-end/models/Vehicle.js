@@ -14,6 +14,11 @@ const vehicleSchema = new mongoose.Schema(
           `${props.value} is not a valid vehicle ID. Format should be VEH-XXXX where XXXX is a 4-digit number.`,
       },
     },
+    vehicleName: {
+      type: String,
+      required: true,
+      trim: true,
+    },
     driverName: {
       type: String,
       required: true,

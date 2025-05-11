@@ -15,7 +15,7 @@ const {
  */
 const createVehicle = async (req, res) => {
   try {
-    const { vehicleId, driverName, imageUrl } = req.body;
+    const { vehicleId, vehicleName, driverName, imageUrl } = req.body;
 
     // Validate vehicle ID format
     if (!vehicleId || !/^VEH-\d{4}$/.test(vehicleId)) {
@@ -27,10 +27,10 @@ const createVehicle = async (req, res) => {
     }
 
     // Validate required fields
-    if (!driverName || !imageUrl) {
+    if (!vehicleName || !driverName || !imageUrl) {
       return res.status(400).json({
         success: false,
-        message: "Driver name and image URL are required.",
+        message: "Vehicle name, driver name, and image URL are required.",
       });
     }
 
@@ -46,6 +46,7 @@ const createVehicle = async (req, res) => {
     // Create new vehicle
     const newVehicle = new Vehicle({
       vehicleId,
+      vehicleName,
       driverName,
       imageUrl,
       // sensorData will be initialized with zeros by default as defined in the schema
@@ -54,12 +55,12 @@ const createVehicle = async (req, res) => {
 
     await newVehicle.save();
     console.log(
-      `Vehicle created: ${vehicleId} - Driver: ${driverName} - Image URL: ${imageUrl}`
+      `Vehicle created: ${vehicleId} - Name: ${vehicleName} - Driver: ${driverName} - Image URL: ${imageUrl}`
     );
 
     return res.status(201).json({
       success: true,
-      message: `Vehicle ${vehicleId} created successfully`,
+      message: `Vehicle ${vehicleId} (${vehicleName}) created successfully`,
       data: newVehicle,
     });
   } catch (error) {

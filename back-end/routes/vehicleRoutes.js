@@ -22,6 +22,7 @@ const {
  *             type: object
  *             required:
  *               - vehicleId
+ *               - vehicleName
  *               - driverName
  *               - imageUrl
  *             properties:
@@ -29,6 +30,10 @@ const {
  *                 type: string
  *                 description: Unique ID for the vehicle (format VEH-XXXX)
  *                 example: VEH-1234
+ *               vehicleName:
+ *                 type: string
+ *                 description: Name or model of the vehicle
+ *                 example: Toyota Camry
  *               driverName:
  *                 type: string
  *                 description: Name of the vehicle driver
@@ -50,7 +55,7 @@ const {
  *                   example: true
  *                 message:
  *                   type: string
- *                   example: Vehicle VEH-1234 created successfully
+ *                   example: Vehicle VEH-1234 (Toyota Camry) created successfully
  *                 data:
  *                   $ref: '#/components/schemas/Vehicle'
  *       400:
