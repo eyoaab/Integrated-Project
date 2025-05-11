@@ -1,52 +1,61 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { toast, Toaster } from "sonner";
+import { Loader2 } from "lucide-react";
 import type { Accident } from "../types";
+import { AccidentDetailDialog } from "../components/accidents/AccidentDetailDialog";
+import { AccidentTableSkeleton } from "../components/accidents/AccidentSkeletons";
 
 export const AccidentsPage = () => {
-  const [viewMode, setViewMode] = useState<"list" | "map">("list");
-  const [accidents, setAccidents] = useState<Accident[]>([
-    {
-      _id: "68203726fa2ebfa8dc9795bc",
-      vehicleId: "VEH-1234",
-      severity: "Medium",
-      time: "2025-05-11T05:35:34.936Z",
-      status: "Notified",
-      sensorData: {
-        acceleration: {
-          x: -9.55,
-          y: 1.37,
-          z: 0.33,
-        },
-        gyroscope: {
-          pitch: 8.32,
-          roll: 0.72,
-          yaw: -5.05,
-        },
-        gps: {
-          latitude: 28.555902,
-          longitude: -25.486434,
-          speed: 3.97,
-        },
-      },
-      location: {
-        latitude: 28.555902,
-        longitude: -25.486434,
-        address: "Geocoding error",
-      },
-      createdAt: "2025-05-11T05:35:34.961Z",
-      updatedAt: "2025-05-11T05:35:35.361Z",
-    },
-  ]);
+  const [accidents, setAccidents] = useState<Accident[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedAccident, setSelectedAccident] = useState<Accident | null>(
+    null
+  );
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const fetchAccidents = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(
+        "https://integrated-project-mf1f.onrender.com/api/accidents"
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch accidents");
+      }
+      const data = await response.json();
+      setAccidents(data.data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An error occurred");
+      toast.error("Failed to fetch accidents");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAccidents();
+  }, []);
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: true,
+    });
+  };
 
   const getStatusColor = (status: Accident["status"]) => {
     switch (status) {
       case "Notified":
-        return "bg-red-500 bg-opacity-20 text-red-500";
+        return "bg-red-500 bg-opacity-20 text-white";
       case "Dispatched":
-        return "bg-yellow-500 bg-opacity-20 text-yellow-500";
+        return "bg-yellow-500 bg-opacity-20 text-white";
       case "Resolved":
-        return "bg-green-500 bg-opacity-20 text-green-500";
+        return "bg-green-500 bg-opacity-20 text-white";
       default:
-        return "bg-gray-500 bg-opacity-20 text-gray-500";
+        return "bg-gray-500 bg-opacity-20 text-white";
     }
   };
 
@@ -63,51 +72,46 @@ export const AccidentsPage = () => {
     }
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleTimeString("en-US", {
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hour12: true,
-    });
-  };
+  const filteredAccidents = accidents.filter((accident) =>
+    accident.vehicleId.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  if (loading) {
+    return (
+      <div>
+        <div className="flex items-center justify-between mb-6">
+          <div className="relative">
+            <div className="w-64 h-10 bg-[#1E1E1E] rounded-lg animate-pulse" />
+          </div>
+        </div>
+        <AccidentTableSkeleton />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-[calc(100vh-12rem)]">
+        <div className="text-red-500 text-center">
+          <p className="text-xl font-semibold mb-2">Error loading accidents</p>
+          <p>{error}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>
+      <Toaster position="top-right" richColors />
       <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-2">
-          <button
-            className={`px-4 py-2 rounded-lg ${
-              viewMode === "list"
-                ? "bg-[#1E1E1E] text-white"
-                : "text-gray-400 hover:bg-[#1E1E1E]"
-            }`}
-            onClick={() => setViewMode("list")}
-          >
-            List View
-          </button>
-          <button
-            className={`px-4 py-2 rounded-lg ${
-              viewMode === "map"
-                ? "bg-[#1E1E1E] text-white"
-                : "text-gray-400 hover:bg-[#1E1E1E]"
-            }`}
-            onClick={() => setViewMode("map")}
-          >
-            Map View
-          </button>
-        </div>
-        <div className="flex items-center gap-4">
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Search accidents..."
-              className="w-64 px-4 py-2 bg-[#1E1E1E] rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          <button className="px-4 py-2 bg-[#1E1E1E] rounded-lg text-white hover:bg-[#2E2E2E]">
-            Last 24h
-          </button>
+        <div className="relative">
+          <input
+            type="text"
+            placeholder="Search accidents..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-64 px-4 py-2 mt-2 bg-[#1E1E1E] rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
         </div>
       </div>
 
@@ -125,7 +129,7 @@ export const AccidentsPage = () => {
             </tr>
           </thead>
           <tbody>
-            {accidents.map((accident) => (
+            {filteredAccidents.map((accident) => (
               <tr key={accident._id} className="border-t border-[#2E2E2E]">
                 <td className="px-6 py-4">
                   <div
@@ -167,21 +171,24 @@ export const AccidentsPage = () => {
                   </div>
                 </td>
                 <td className="px-6 py-4 text-right">
-                  {accident.status === "Notified" ? (
-                    <button className="px-3 py-1 text-sm bg-red-500 bg-opacity-20 text-red-500 rounded-md hover:bg-opacity-30">
-                      Dispatch
-                    </button>
-                  ) : (
-                    <button className="px-3 py-1 text-sm bg-gray-700 rounded-md hover:bg-gray-600 text-white">
-                      {accident.status === "Dispatched" ? "Track" : "Detail"}
-                    </button>
-                  )}
+                  <button
+                    onClick={() => setSelectedAccident(accident)}
+                    className="px-3 py-1 text-sm bg-gray-700 rounded-md hover:bg-gray-600 text-white"
+                  >
+                    Show Details
+                  </button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+
+      <AccidentDetailDialog
+        accident={selectedAccident}
+        isOpen={selectedAccident !== null}
+        onClose={() => setSelectedAccident(null)}
+      />
     </div>
   );
 };
