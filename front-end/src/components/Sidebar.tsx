@@ -13,9 +13,11 @@ interface SidebarProps {
 
 export const Sidebar = ({ onTabChange, activeTab }: SidebarProps) => {
   return (
-    <div className="w-64 bg-[#1a1a1a] h-screen text-white p-4">
+    <div className="sticky top-0 h-screen w-64 bg-[#1a1a1a] p-4 flex flex-col overflow-y-auto">
       <div className="flex items-center gap-2 mb-8">
-        <span className="text-xl font-semibold">Emergency Dashboard</span>
+        <span className="text-xl font-semibold text-white">
+          Emergency Dashboard
+        </span>
       </div>
 
       <div className="space-y-2">
@@ -28,7 +30,7 @@ export const Sidebar = ({ onTabChange, activeTab }: SidebarProps) => {
                 className={`flex items-center gap-2 w-full p-2 rounded-lg ${
                   activeTab === "accidents"
                     ? "bg-red-900/20 text-red-500"
-                    : "hover:bg-gray-800"
+                    : "hover:bg-gray-800 text-white"
                 }`}
               >
                 <AlertTriangle size={20} />
@@ -41,7 +43,7 @@ export const Sidebar = ({ onTabChange, activeTab }: SidebarProps) => {
                 className={`flex items-center gap-2 w-full p-2 rounded-lg ${
                   activeTab === "vehicles"
                     ? "bg-blue-900/20 text-blue-500"
-                    : "hover:bg-gray-800"
+                    : "hover:bg-gray-800 text-white"
                 }`}
               >
                 <Car size={20} />
