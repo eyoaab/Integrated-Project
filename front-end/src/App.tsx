@@ -6,10 +6,22 @@ import type { TabType } from "./types";
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<TabType>("accidents");
+  const [isAddVehicleOpen, setIsAddVehicleOpen] = useState(false);
 
   return (
-    <DashboardLayout activeTab={activeTab} onTabChange={setActiveTab}>
-      {activeTab === "vehicles" ? <VehiclesPage /> : <AccidentsPage />}
+    <DashboardLayout
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      onAddVehicle={() => setIsAddVehicleOpen(true)}
+    >
+      {activeTab === "vehicles" ? (
+        <VehiclesPage
+          isAddDialogOpen={isAddVehicleOpen}
+          onAddDialogClose={() => setIsAddVehicleOpen(false)}
+        />
+      ) : (
+        <AccidentsPage />
+      )}
     </DashboardLayout>
   );
 }

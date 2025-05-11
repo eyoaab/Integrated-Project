@@ -11,8 +11,17 @@ import {
   GridSkeleton,
   ListSkeleton,
 } from "../components/vehicles/VehicleSkeletons";
+import { AddVehicleDialog } from "../components/vehicles/AddVehicleDialog";
 
-export const VehiclesPage = () => {
+interface VehiclesPageProps {
+  isAddDialogOpen: boolean;
+  onAddDialogClose: () => void;
+}
+
+export const VehiclesPage = ({
+  isAddDialogOpen,
+  onAddDialogClose,
+}: VehiclesPageProps) => {
   const [viewMode, setViewMode] = useState<"list" | "grid">("list");
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [loading, setLoading] = useState(true);
@@ -195,6 +204,11 @@ export const VehiclesPage = () => {
           onUpdateSensor={handleUpdateSensor}
         />
       )}
+      <AddVehicleDialog
+        isOpen={isAddDialogOpen}
+        onClose={onAddDialogClose}
+        onSuccess={fetchVehicles}
+      />
     </div>
   );
 };
