@@ -1,6 +1,13 @@
 import { useState, useEffect } from "react";
 import type { Vehicle } from "../types";
-import { Loader2, MapPin, Activity } from "lucide-react";
+import {
+  Loader2,
+  MapPin,
+  Activity,
+  RefreshCw,
+  AlertTriangle,
+} from "lucide-react";
+import { toast, Toaster } from "sonner";
 
 export const VehiclesPage = () => {
   const [viewMode, setViewMode] = useState<"list" | "grid">("list");
@@ -11,28 +18,119 @@ export const VehiclesPage = () => {
   const [statusFilter, setStatusFilter] = useState<
     "all" | "active" | "warning" | "critical"
   >("all");
+  const [loadingStates, setLoadingStates] = useState<{
+    [key: string]: { trigger: boolean; refresh: boolean };
+  }>({});
+
+  const fetchVehicles = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(
+        "https://integrated-project-mf1f.onrender.com/api/vehicles"
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch vehicles");
+      }
+      const data = await response.json();
+      setVehicles(data.data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An error occurred");
+      toast.error("Failed to fetch vehicles");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateVehicleData = async (vehicleId: string) => {
+    try {
+      const response = await fetch(
+        "https://integrated-project-mf1f.onrender.com/api/vehicles"
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch updated vehicle data");
+      }
+      const data = await response.json();
+      // Update only the specific vehicle in the list
+      setVehicles((prevVehicles) =>
+        prevVehicles.map((vehicle) => {
+          const updatedVehicle = data.data.find(
+            (v: Vehicle) => v.vehicleId === vehicle.vehicleId
+          );
+          return updatedVehicle || vehicle;
+        })
+      );
+    } catch (err) {
+      toast.error("Failed to update vehicle data");
+    }
+  };
 
   useEffect(() => {
-    const fetchVehicles = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch(
-          "https://integrated-project-mf1f.onrender.com/api/vehicles"
-        );
-        if (!response.ok) {
-          throw new Error("Failed to fetch vehicles");
-        }
-        const data = await response.json();
-        setVehicles(data.data);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "An error occurred");
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchVehicles();
   }, []);
+
+  const handleTriggerAccident = async (vehicleId: string) => {
+    // Set loading state for trigger button
+    setLoadingStates((prev) => ({
+      ...prev,
+      [vehicleId]: { ...prev[vehicleId], trigger: true },
+    }));
+
+    try {
+      const response = await fetch(
+        `https://integrated-project-mf1f.onrender.com/api/cause-accident/${vehicleId}`,
+        {
+          method: "POST",
+        }
+      );
+
+      if (response.ok) {
+        toast.success("Accident triggered successfully");
+        await updateVehicleData(vehicleId);
+      } else {
+        throw new Error("Failed to trigger accident");
+      }
+    } catch (err) {
+      toast.error("Failed to trigger accident");
+    } finally {
+      // Reset loading state
+      setLoadingStates((prev) => ({
+        ...prev,
+        [vehicleId]: { ...prev[vehicleId], trigger: false },
+      }));
+    }
+  };
+
+  const handleUpdateSensor = async (vehicleId: string) => {
+    // Set loading state for refresh button
+    setLoadingStates((prev) => ({
+      ...prev,
+      [vehicleId]: { ...prev[vehicleId], refresh: true },
+    }));
+
+    try {
+      const response = await fetch(
+        `https://integrated-project-mf1f.onrender.com/api/update-sensor/${vehicleId}`,
+        {
+          method: "POST",
+        }
+      );
+
+      if (response.ok) {
+        toast.success("Sensor data updated successfully");
+        await updateVehicleData(vehicleId);
+      } else {
+        throw new Error("Failed to update sensor data");
+      }
+    } catch (err) {
+      toast.error("Failed to update sensor data");
+    } finally {
+      // Reset loading state
+      setLoadingStates((prev) => ({
+        ...prev,
+        [vehicleId]: { ...prev[vehicleId], refresh: false },
+      }));
+    }
+  };
 
   const getVehicleStatus = (vehicle: Vehicle) => {
     if (vehicle.hasAccident) return "Critical";
@@ -69,6 +167,9 @@ export const VehiclesPage = () => {
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
       {filteredVehicles.map((vehicle) => {
         const status = getVehicleStatus(vehicle);
+        const isLoadingTrigger = loadingStates[vehicle.vehicleId]?.trigger;
+        const isLoadingRefresh = loadingStates[vehicle.vehicleId]?.refresh;
+
         return (
           <div
             key={vehicle.vehicleId}
@@ -120,17 +221,29 @@ export const VehiclesPage = () => {
             </div>
 
             <div className="flex gap-2 mt-6">
-              <button className="flex-1 px-3 py-2 text-sm bg-gray-700 rounded-md hover:bg-gray-600 text-white transition-colors">
-                Details
+              <button
+                onClick={() => handleTriggerAccident(vehicle.vehicleId)}
+                disabled={isLoadingTrigger || isLoadingRefresh}
+                className="flex-1 px-3 py-2 text-sm bg-red-500 hover:bg-red-600 text-white rounded-md transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isLoadingTrigger ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <AlertTriangle className="w-4 h-4" />
+                )}
+                {isLoadingTrigger ? "Loading..." : "Trigger"}
               </button>
               <button
-                className={`flex-1 px-3 py-2 text-sm rounded-md text-white transition-colors ${
-                  vehicle.hasAccident
-                    ? "bg-red-500 hover:bg-red-600"
-                    : "bg-gray-700 hover:bg-gray-600"
-                }`}
+                onClick={() => handleUpdateSensor(vehicle.vehicleId)}
+                disabled={isLoadingTrigger || isLoadingRefresh}
+                className="flex-1 px-3 py-2 text-sm bg-gray-700 hover:bg-gray-600 text-white rounded-md transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {vehicle.hasAccident ? "Alert" : "Track"}
+                {isLoadingRefresh ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <RefreshCw className="w-4 h-4" />
+                )}
+                {isLoadingRefresh ? "Loading..." : "Refresh"}
               </button>
             </div>
           </div>
@@ -155,6 +268,9 @@ export const VehiclesPage = () => {
         <tbody>
           {filteredVehicles.map((vehicle) => {
             const status = getVehicleStatus(vehicle);
+            const isLoadingTrigger = loadingStates[vehicle.vehicleId]?.trigger;
+            const isLoadingRefresh = loadingStates[vehicle.vehicleId]?.refresh;
+
             return (
               <tr
                 key={vehicle.vehicleId}
@@ -198,17 +314,29 @@ export const VehiclesPage = () => {
                 </td>
                 <td className="px-6 py-4 text-right">
                   <div className="flex items-center justify-end gap-2">
-                    <button className="px-3 py-1 text-sm bg-gray-700 rounded-md hover:bg-gray-600 text-white">
-                      Details
+                    <button
+                      onClick={() => handleTriggerAccident(vehicle.vehicleId)}
+                      disabled={isLoadingTrigger || isLoadingRefresh}
+                      className="px-3 py-1 text-sm bg-red-500 hover:bg-red-600 text-white rounded-md transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {isLoadingTrigger ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <AlertTriangle className="w-4 h-4" />
+                      )}
+                      {isLoadingTrigger ? "Loading..." : "Trigger"}
                     </button>
                     <button
-                      className={`px-3 py-1 text-sm rounded-md text-white ${
-                        vehicle.hasAccident
-                          ? "bg-red-500 hover:bg-red-600"
-                          : "bg-gray-700 hover:bg-gray-600"
-                      }`}
+                      onClick={() => handleUpdateSensor(vehicle.vehicleId)}
+                      disabled={isLoadingTrigger || isLoadingRefresh}
+                      className="px-3 py-1 text-sm bg-gray-700 hover:bg-gray-600 text-white rounded-md transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      {vehicle.hasAccident ? "Alert" : "Track"}
+                      {isLoadingRefresh ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <RefreshCw className="w-4 h-4" />
+                      )}
+                      {isLoadingRefresh ? "Loading..." : "Refresh"}
                     </button>
                   </div>
                 </td>
@@ -241,6 +369,7 @@ export const VehiclesPage = () => {
 
   return (
     <div>
+      <Toaster position="top-right" richColors />
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
           <button
