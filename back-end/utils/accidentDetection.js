@@ -149,16 +149,18 @@ const getAddress = async (latitude, longitude) => {
 
 /**
  * Simulate sending emergency notification
- * @param {Object} report - The accident report data
+ * @param {Object} accident - The accident data
  */
-const notifyEmergencyServices = (report) => {
+const notifyEmergencyServices = (accident) => {
   console.log("\n🚨 EMERGENCY NOTIFICATION SENT 🚨");
-  console.log(`Vehicle ID: ${report.vehicleId}`);
-  console.log(`Accident Severity: ${report.severity}`);
-  console.log(`Time: ${report.time}`);
-  console.log(`Location: ${report.location.address || "Address unavailable"}`);
+  console.log(`Vehicle ID: ${accident.vehicleId}`);
+  console.log(`Accident Severity: ${accident.severity}`);
+  console.log(`Time: ${accident.time}`);
   console.log(
-    `Coordinates: ${report.location.latitude}, ${report.location.longitude}`
+    `Location: ${accident.location.address || "Address unavailable"}`
+  );
+  console.log(
+    `Coordinates: ${accident.location.latitude}, ${accident.location.longitude}`
   );
   console.log("Emergency services have been notified.\n");
 };

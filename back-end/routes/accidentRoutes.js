@@ -3,6 +3,7 @@ const router = express.Router();
 const {
   getAllAccidents,
   getAccidentsByVehicle,
+  updateAccidentStatus,
 } = require("../controllers/accidentController");
 
 /**
@@ -82,5 +83,70 @@ router.get("/accidents", getAllAccidents);
  *               $ref: '#/components/schemas/Error'
  */
 router.get("/accidents/vehicle/:vehicleId", getAccidentsByVehicle);
+
+/**
+ * @swagger
+ * /api/accidents/{accidentId}:
+ *   put:
+ *     summary: Update accident status
+ *     tags: [Accidents]
+ *     description: Updates the status of an accident record
+ *     parameters:
+ *       - in: path
+ *         name: accidentId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: ID of the accident to update
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - status
+ *             properties:
+ *               status:
+ *                 type: string
+ *                 enum: [Pending, Notified]
+ *                 description: New status for the accident
+ *                 example: Notified
+ *     responses:
+ *       200:
+ *         description: Accident status updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Accident status updated to Notified
+ *                 data:
+ *                   $ref: '#/components/schemas/Accident'
+ *       400:
+ *         description: Invalid status provided
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       404:
+ *         description: Accident not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
+router.put("/accidents/:accidentId", updateAccidentStatus);
 
 module.exports = router;

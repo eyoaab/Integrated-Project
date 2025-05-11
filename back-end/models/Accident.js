@@ -35,6 +35,12 @@ const accidentSchema = new mongoose.Schema(
     location: {
       latitude: Number,
       longitude: Number,
+      address: String,
+    },
+    status: {
+      type: String,
+      enum: ["Pending", "Notified"],
+      default: "Pending",
     },
   },
   {

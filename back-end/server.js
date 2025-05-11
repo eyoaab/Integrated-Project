@@ -8,7 +8,6 @@ const swaggerSpec = require("./swagger");
 // Import routes
 const vehicleRoutes = require("./routes/vehicleRoutes");
 const accidentRoutes = require("./routes/accidentRoutes");
-const reportRoutes = require("./routes/reportRoutes");
 
 // Load environment variables
 dotenv.config();
@@ -37,7 +36,6 @@ app.get("/api-docs.json", (req, res) => {
 // Use routes
 app.use("/api", vehicleRoutes);
 app.use("/api", accidentRoutes);
-app.use("/api", reportRoutes);
 
 // Connect to MongoDB
 const MONGODB_URI =

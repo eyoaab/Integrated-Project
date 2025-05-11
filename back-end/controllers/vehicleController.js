@@ -1,6 +1,5 @@
 const Vehicle = require("../models/Vehicle");
 const Accident = require("../models/Accident");
-const Report = require("../models/Report");
 const {
   detectAccident,
   generateSensorData,
@@ -105,18 +104,6 @@ const updateSensorData = async (req, res) => {
       // Update vehicle's accident status
       vehicle.hasAccident = true;
 
-      // Create accident record
-      const accident = new Accident({
-        vehicleId,
-        sensorData,
-        severity: accidentResult.severity,
-        time: new Date(),
-        location: {
-          latitude: sensorData.gps.latitude,
-          longitude: sensorData.gps.longitude,
-        },
-      });
-
       // Get address from coordinates
       let address;
       try {
@@ -129,8 +116,8 @@ const updateSensorData = async (req, res) => {
         address = "Address not available";
       }
 
-      // Create report record
-      const report = new Report({
+      // Create accident record
+      const accident = new Accident({
         vehicleId,
         sensorData,
         severity: accidentResult.severity,
@@ -145,14 +132,13 @@ const updateSensorData = async (req, res) => {
 
       // Save records
       await accident.save();
-      await report.save();
 
       // Simulate notification to emergency services
-      notifyEmergencyServices(report);
+      notifyEmergencyServices(accident);
 
-      // Update report status to notified
-      report.status = "Notified";
-      await report.save();
+      // Update accident status to notified
+      accident.status = "Notified";
+      await accident.save();
 
       console.log(
         `Accident detected for vehicle ${vehicleId}. Severity: ${accidentResult.severity}`
@@ -170,7 +156,6 @@ const updateSensorData = async (req, res) => {
             ...accident.toObject(),
             type: accidentResult.accidentType,
           },
-          report,
         },
       });
     }
@@ -227,18 +212,6 @@ const causeAccident = async (req, res) => {
     // Update vehicle's accident status
     vehicle.hasAccident = true;
 
-    // Create accident record
-    const accident = new Accident({
-      vehicleId,
-      sensorData,
-      severity: accidentResult.severity,
-      time: new Date(),
-      location: {
-        latitude: sensorData.gps.latitude,
-        longitude: sensorData.gps.longitude,
-      },
-    });
-
     // Get address from coordinates
     let address;
     try {
@@ -251,8 +224,8 @@ const causeAccident = async (req, res) => {
       address = "Address not available";
     }
 
-    // Create report record
-    const report = new Report({
+    // Create accident record
+    const accident = new Accident({
       vehicleId,
       sensorData,
       severity: accidentResult.severity,
@@ -267,15 +240,14 @@ const causeAccident = async (req, res) => {
 
     // Save records
     await accident.save();
-    await report.save();
     await vehicle.save();
 
     // Simulate notification to emergency services
-    notifyEmergencyServices(report);
+    notifyEmergencyServices(accident);
 
-    // Update report status to notified
-    report.status = "Notified";
-    await report.save();
+    // Update accident status to notified
+    accident.status = "Notified";
+    await accident.save();
 
     console.log(
       `Accident simulated for vehicle ${vehicleId}. Severity: ${accidentResult.severity}`
@@ -290,7 +262,6 @@ const causeAccident = async (req, res) => {
           ...accident.toObject(),
           type: accidentResult.accidentType,
         },
-        report,
       },
     });
   } catch (error) {

@@ -174,8 +174,6 @@ router.post("/vehicles", createVehicle);
  *                           $ref: '#/components/schemas/Vehicle'
  *                         accident:
  *                           $ref: '#/components/schemas/Accident'
- *                         report:
- *                           $ref: '#/components/schemas/Report'
  *       404:
  *         description: Vehicle not found
  *         content:
@@ -226,8 +224,6 @@ router.post("/update-sensor/:vehicleId", updateSensorData);
  *                       $ref: '#/components/schemas/Vehicle'
  *                     accident:
  *                       $ref: '#/components/schemas/Accident'
- *                     report:
- *                       $ref: '#/components/schemas/Report'
  *       404:
  *         description: Vehicle not found
  *         content:

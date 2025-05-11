@@ -29,11 +29,7 @@ const swaggerDefinition = {
     },
     {
       name: "Accidents",
-      description: "API endpoints for accident data",
-    },
-    {
-      name: "Reports",
-      description: "API endpoints for emergency reports",
+      description: "API endpoints for accident data and emergency response",
     },
   ],
   components: {
@@ -135,46 +131,6 @@ const swaggerDefinition = {
             properties: {
               latitude: { type: "number", example: 37.7749 },
               longitude: { type: "number", example: -122.4194 },
-            },
-          },
-          createdAt: {
-            type: "string",
-            format: "date-time",
-          },
-          updatedAt: {
-            type: "string",
-            format: "date-time",
-          },
-        },
-      },
-      Report: {
-        type: "object",
-        required: ["vehicleId", "severity"],
-        properties: {
-          vehicleId: {
-            type: "string",
-            description: "Vehicle ID associated with the report",
-            example: "VEH-1234",
-          },
-          sensorData: {
-            $ref: "#/components/schemas/Vehicle/properties/sensorData",
-          },
-          severity: {
-            type: "string",
-            enum: ["Low", "Medium", "High"],
-            description: "Severity level of the accident",
-            example: "Medium",
-          },
-          time: {
-            type: "string",
-            format: "date-time",
-            description: "Time when the report was created",
-          },
-          location: {
-            type: "object",
-            properties: {
-              latitude: { type: "number", example: 37.7749 },
-              longitude: { type: "number", example: -122.4194 },
               address: {
                 type: "string",
                 example: "123 Main St, San Francisco, CA",
@@ -184,7 +140,7 @@ const swaggerDefinition = {
           status: {
             type: "string",
             enum: ["Pending", "Notified"],
-            description: "Current status of the emergency report",
+            description: "Current status of the emergency response",
             example: "Notified",
           },
           createdAt: {
