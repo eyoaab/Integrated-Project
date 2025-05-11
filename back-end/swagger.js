@@ -18,7 +18,7 @@ const swaggerDefinition = {
   },
   servers: [
     {
-      url: "http://localhost:3000",
+      url: "https://integrated-project-mf1f.onrender.com",
       description: "Development Server",
     },
   ],
