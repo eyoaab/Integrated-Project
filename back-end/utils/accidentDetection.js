@@ -138,14 +138,122 @@ const generateSensorData = (forceAccident = false) => {
  */
 const getAddress = async (latitude, longitude) => {
   try {
-    const res = await geocoder.reverse({ lat: latitude, lon: longitude });
+    // Set up geocoder options to prefer English or Amharic results
+    const geocoderInstance = NodeGeocoder({
+      ...options,
+      language: "en", // Prefer English results
+    });
+
+    const res = await geocoderInstance.reverse({
+      lat: latitude,
+      lon: longitude,
+    });
+
     if (res && res.length > 0) {
-      return res[0].formattedAddress || "Address not found";
+      // Extract address components
+      const addressObj = res[0];
+
+      // Create a custom address format for Ethiopia
+      let formattedAddress = "";
+
+      // Check if we have building/street details
+      if (addressObj.streetName) {
+        formattedAddress += addressObj.streetName;
+      }
+
+      // Add neighborhood/suburb if available
+      if (addressObj.neighbourhood || addressObj.suburb) {
+        if (formattedAddress) formattedAddress += ", ";
+        formattedAddress += addressObj.neighbourhood || addressObj.suburb;
+      }
+
+      // Add city/town
+      if (addressObj.city || addressObj.town || addressObj.state) {
+        if (formattedAddress) formattedAddress += ", ";
+        formattedAddress +=
+          addressObj.city || addressObj.town || addressObj.state;
+      }
+
+      // Add country
+      if (addressObj.country) {
+        if (formattedAddress) formattedAddress += ", ";
+        formattedAddress += "Ethiopia";
+      }
+
+      // If we still don't have a proper address, use a default Ethiopian format
+      if (!formattedAddress || formattedAddress === "Ethiopia") {
+        // Default to major cities in Ethiopia based on approximate coordinates
+        if (
+          latitude > 8.9 &&
+          latitude < 9.1 &&
+          longitude > 38.7 &&
+          longitude < 38.8
+        ) {
+          formattedAddress = "Addis Ababa, Ethiopia";
+        } else if (
+          latitude > 11.5 &&
+          latitude < 11.7 &&
+          longitude > 37.3 &&
+          longitude < 37.5
+        ) {
+          formattedAddress = "Bahir Dar, Ethiopia";
+        } else if (
+          latitude > 9.3 &&
+          latitude < 9.5 &&
+          longitude > 42.1 &&
+          longitude < 42.2
+        ) {
+          formattedAddress = "Harar, Ethiopia";
+        } else if (
+          latitude > 11.5 &&
+          latitude < 11.7 &&
+          longitude > 39.4 &&
+          longitude < 39.6
+        ) {
+          formattedAddress = "Dessie, Ethiopia";
+        } else if (
+          latitude > 13.4 &&
+          latitude < 13.6 &&
+          longitude > 39.4 &&
+          longitude < 39.6
+        ) {
+          formattedAddress = "Mekelle, Ethiopia";
+        } else if (
+          latitude > 7.0 &&
+          latitude < 7.1 &&
+          longitude > 38.4 &&
+          longitude < 38.5
+        ) {
+          formattedAddress = "Hawassa, Ethiopia";
+        } else if (
+          latitude > 9.6 &&
+          latitude < 9.7 &&
+          longitude > 41.8 &&
+          longitude < 41.9
+        ) {
+          formattedAddress = "Dire Dawa, Ethiopia";
+        } else if (
+          latitude > 7.6 &&
+          latitude < 7.7 &&
+          longitude > 36.8 &&
+          longitude < 36.9
+        ) {
+          formattedAddress = "Jimma, Ethiopia";
+        } else {
+          // For other locations, create a generic Ethiopian address
+          formattedAddress = `Location in Ethiopia (${latitude.toFixed(
+            4
+          )}, ${longitude.toFixed(4)})`;
+        }
+      }
+
+      return formattedAddress;
     }
-    return "Address not found";
+    return "Address in Ethiopia";
   } catch (error) {
     console.error("Geocoding error:", error);
-    return "Geocoding error";
+    // Return a default Ethiopian location if geocoding fails
+    return "Unknown location in Ethiopia";
   }
 };
 
