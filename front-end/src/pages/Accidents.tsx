@@ -4,6 +4,8 @@ import type { Accident } from "../types";
 import { AccidentDetailDialog } from "../components/accidents/AccidentDetailDialog";
 import { AccidentTableSkeleton } from "../components/accidents/AccidentSkeletons";
 import { AccidentControls } from "../components/accidents/AccidentControls";
+import { AccidentReportDialog } from "../components/accidents/AccidentReportDialog";
+import { FileDown } from "lucide-react";
 
 export const AccidentsPage = () => {
   const [accidents, setAccidents] = useState<Accident[]>([]);
@@ -16,6 +18,7 @@ export const AccidentsPage = () => {
   const [severityFilter, setSeverityFilter] = useState<
     "all" | "High" | "Medium" | "Low"
   >("all");
+  const [isReportDialogOpen, setIsReportDialogOpen] = useState(false);
 
   const fetchAccidents = async () => {
     try {
@@ -74,12 +77,15 @@ export const AccidentsPage = () => {
   if (loading) {
     return (
       <div>
-        <AccidentControls
-          searchTerm=""
-          onSearchChange={() => {}}
-          severityFilter="all"
-          onSeverityFilterChange={() => {}}
-        />
+        <div className="flex items-center justify-between mb-6">
+          <AccidentControls
+            searchTerm=""
+            onSearchChange={() => {}}
+            severityFilter="all"
+            onSeverityFilterChange={() => {}}
+          />
+          <div className="w-36 h-9 bg-[#1E1E1E] rounded-lg animate-pulse" />
+        </div>
         <AccidentTableSkeleton />
       </div>
     );
@@ -99,12 +105,21 @@ export const AccidentsPage = () => {
   return (
     <div>
       <Toaster position="top-right" richColors />
-      <AccidentControls
-        searchTerm={searchTerm}
-        onSearchChange={setSearchTerm}
-        severityFilter={severityFilter}
-        onSeverityFilterChange={setSeverityFilter}
-      />
+      <div className="flex items-center justify-between mb-6">
+        <AccidentControls
+          searchTerm={searchTerm}
+          onSearchChange={setSearchTerm}
+          severityFilter={severityFilter}
+          onSeverityFilterChange={setSeverityFilter}
+        />
+        <button
+          onClick={() => setIsReportDialogOpen(true)}
+          className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
+        >
+          <FileDown className="w-4 h-4" />
+          Download Report
+        </button>
+      </div>
 
       <div className="bg-[#1E1E1E] rounded-lg overflow-hidden">
         <table className="w-full">
@@ -169,6 +184,12 @@ export const AccidentsPage = () => {
         accident={selectedAccident}
         isOpen={selectedAccident !== null}
         onClose={() => setSelectedAccident(null)}
+      />
+
+      <AccidentReportDialog
+        accidents={accidents}
+        isOpen={isReportDialogOpen}
+        onClose={() => setIsReportDialogOpen(false)}
       />
     </div>
   );
