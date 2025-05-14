@@ -74,14 +74,16 @@ const generateSensorData = (forceAccident = false) => {
       yaw: faker.datatype.float({ min: -10, max: 10 }),
     },
     gps: {
+      // Ethiopia's latitude range: approximately 3.5°N to 14.9°N
       latitude: faker.datatype.float({
-        min: -90,
-        max: 90,
+        min: 3.5,
+        max: 14.9,
         precision: 0.000001,
       }),
+      // Ethiopia's longitude range: approximately 33°E to 48°E
       longitude: faker.datatype.float({
-        min: -180,
-        max: 180,
+        min: 33.0,
+        max: 48.0,
         precision: 0.000001,
       }),
       speed: faker.datatype.float({ min: 0, max: 120 }), // km/h
