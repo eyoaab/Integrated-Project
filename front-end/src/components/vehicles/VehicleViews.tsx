@@ -6,6 +6,7 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import type { Vehicle } from "../../types";
+import { useState } from "react";
 
 interface VehicleViewProps {
   vehicles: Vehicle[];
@@ -33,6 +34,55 @@ const getStatusColor = (status: "Active" | "Warning" | "Critical") => {
     default:
       return "bg-gray-500";
   }
+};
+
+const VehicleImage = ({
+  vehicle,
+  size = "medium",
+}: {
+  vehicle: Vehicle;
+  size?: "small" | "medium" | "large";
+}) => {
+  const [imageError, setImageError] = useState(false);
+
+  const sizeClasses = {
+    small: "w-10 h-10",
+    medium: "w-16 h-16",
+    large: "w-20 h-20",
+  };
+
+  const fontSizes = {
+    small: "text-sm",
+    medium: "text-xl",
+    large: "text-2xl",
+  };
+
+  // Show initials if image URL is empty or if there was an error loading the image
+  if (!vehicle.imageUrl || imageError) {
+    return (
+      <div
+        className={`${sizeClasses[size]} rounded-full bg-gray-700 flex items-center justify-center flex-shrink-0`}
+      >
+        <span className={`text-white ${fontSizes[size]}`}>
+          {vehicle.vehicleName.substring(0, 2)}
+        </span>
+      </div>
+    );
+  }
+
+  // Show the vehicle image
+  return (
+    <div
+      className={`${sizeClasses[size]} rounded-full bg-gray-700 flex items-center justify-center flex-shrink-0 overflow-hidden`}
+    >
+      <img
+        src={vehicle.imageUrl}
+        alt={vehicle.vehicleName}
+        className="w-full h-full object-cover"
+        onError={() => setImageError(true)}
+      />
+    </div>
+  );
 };
 
 export const VehicleGridView = ({
@@ -65,11 +115,7 @@ export const VehicleGridView = ({
           </div>
 
           <div className="flex items-center gap-4 mb-6">
-            <div className="w-16 h-16 rounded-full bg-gray-700 flex items-center justify-center flex-shrink-0">
-              <span className="text-white text-xl">
-                {vehicle.vehicleName.substring(0, 2)}
-              </span>
-            </div>
+            <VehicleImage vehicle={vehicle} size="medium" />
             <div>
               <h3 className="text-white font-medium">{vehicle.vehicleName}</h3>
               <p className="text-gray-400 text-sm">{vehicle.driverName}</p>
@@ -168,11 +214,7 @@ export const VehicleListView = ({
               </td>
               <td className="px-6 py-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center">
-                    <span className="text-white text-sm">
-                      {vehicle.vehicleName.substring(0, 2)}
-                    </span>
-                  </div>
+                  <VehicleImage vehicle={vehicle} size="small" />
                   <div>
                     <span className="text-white block">
                       {vehicle.vehicleName}
