@@ -3,6 +3,7 @@ import { toast, Toaster } from "sonner";
 import type { Accident } from "../types";
 import { AccidentDetailDialog } from "../components/accidents/AccidentDetailDialog";
 import { AccidentTableSkeleton } from "../components/accidents/AccidentSkeletons";
+import { AccidentControls } from "../components/accidents/AccidentControls";
 
 export const AccidentsPage = () => {
   const [accidents, setAccidents] = useState<Accident[]>([]);
@@ -12,6 +13,9 @@ export const AccidentsPage = () => {
     null
   );
   const [searchTerm, setSearchTerm] = useState("");
+  const [severityFilter, setSeverityFilter] = useState<
+    "all" | "High" | "Medium" | "Low"
+  >("all");
 
   const fetchAccidents = async () => {
     try {
@@ -45,19 +49,6 @@ export const AccidentsPage = () => {
     });
   };
 
-  const getStatusColor = (status: Accident["status"]) => {
-    switch (status) {
-      case "Notified":
-        return "bg-red-500 bg-opacity-20 text-white";
-      case "Dispatched":
-        return "bg-yellow-500 bg-opacity-20 text-white";
-      case "Resolved":
-        return "bg-green-500 bg-opacity-20 text-white";
-      default:
-        return "bg-gray-500 bg-opacity-20 text-white";
-    }
-  };
-
   const getSeverityColor = (severity: Accident["severity"]) => {
     switch (severity) {
       case "High":
@@ -71,18 +62,24 @@ export const AccidentsPage = () => {
     }
   };
 
-  const filteredAccidents = accidents.filter((accident) =>
-    accident.vehicleId.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredAccidents = accidents.filter((accident) => {
+    const matchesSearch = accident.vehicleId
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    const matchesSeverity =
+      severityFilter === "all" || accident.severity === severityFilter;
+    return matchesSearch && matchesSeverity;
+  });
 
   if (loading) {
     return (
       <div>
-        <div className="flex items-center justify-between mb-6">
-          <div className="relative">
-            <div className="w-64 h-10 bg-[#1E1E1E] rounded-lg animate-pulse" />
-          </div>
-        </div>
+        <AccidentControls
+          searchTerm=""
+          onSearchChange={() => {}}
+          severityFilter="all"
+          onSeverityFilterChange={() => {}}
+        />
         <AccidentTableSkeleton />
       </div>
     );
@@ -102,23 +99,17 @@ export const AccidentsPage = () => {
   return (
     <div>
       <Toaster position="top-right" richColors />
-      <div className="flex items-center justify-between mb-6">
-        <div className="relative">
-          <input
-            type="text"
-            placeholder="Search accidents..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-64 px-4 py-2 mt-2 bg-[#1E1E1E] rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-      </div>
+      <AccidentControls
+        searchTerm={searchTerm}
+        onSearchChange={setSearchTerm}
+        severityFilter={severityFilter}
+        onSeverityFilterChange={setSeverityFilter}
+      />
 
       <div className="bg-[#1E1E1E] rounded-lg overflow-hidden">
         <table className="w-full">
           <thead>
             <tr className="bg-[#252525] text-gray-400 text-sm">
-              <th className="px-6 py-4 text-left">Status</th>
               <th className="px-6 py-4 text-left">Location</th>
               <th className="px-6 py-4 text-left">Time</th>
               <th className="px-6 py-4 text-left">Vehicle ID</th>
@@ -130,15 +121,6 @@ export const AccidentsPage = () => {
           <tbody>
             {filteredAccidents.map((accident) => (
               <tr key={accident._id} className="border-t border-[#2E2E2E]">
-                <td className="px-6 py-4">
-                  <div
-                    className={`px-3 py-1 text-sm rounded-md inline-block ${getStatusColor(
-                      accident.status
-                    )}`}
-                  >
-                    {accident.status}
-                  </div>
-                </td>
                 <td className="px-6 py-4 text-white">
                   {accident.location.address !== "Geocoding error"
                     ? accident.location.address
