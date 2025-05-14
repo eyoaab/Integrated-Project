@@ -19,10 +19,10 @@ export const AccidentControls = ({
         <div className="relative">
           <input
             type="text"
-            placeholder="Search accidents..."
+            placeholder="Search by location or vehicle ID..."
             value={searchTerm}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="w-64 px-4 py-2 mt-2 bg-[#1E1E1E] rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-72 px-4 py-2 mt-2 bg-[#1E1E1E] rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
         <select

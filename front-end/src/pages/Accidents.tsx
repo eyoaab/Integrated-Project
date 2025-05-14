@@ -66,11 +66,23 @@ export const AccidentsPage = () => {
   };
 
   const filteredAccidents = accidents.filter((accident) => {
-    const matchesSearch = accident.vehicleId
+    const matchesVehicleId = accident.vehicleId
       .toLowerCase()
       .includes(searchTerm.toLowerCase());
+
+    const locationText =
+      accident.location.address !== "Geocoding error"
+        ? accident.location.address.toLowerCase()
+        : `${accident.location.latitude.toFixed(
+            6
+          )}, ${accident.location.longitude.toFixed(6)}`;
+    const matchesLocation = locationText.includes(searchTerm.toLowerCase());
+
+    const matchesSearch = matchesVehicleId || matchesLocation;
+
     const matchesSeverity =
       severityFilter === "all" || accident.severity === severityFilter;
+
     return matchesSearch && matchesSeverity;
   });
 
