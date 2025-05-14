@@ -61,6 +61,46 @@ const detectAccident = (sensorData) => {
  * @returns {Object} - Generated sensor data
  */
 const generateSensorData = (forceAccident = false) => {
+  // Define specific Ethiopian cities with their coordinates
+  const ethiopianCities = [
+    { name: "Addis Ababa", lat: 9.0222, lon: 38.7468 },
+    { name: "Dire Dawa", lat: 9.5931, lon: 41.8661 },
+    { name: "Mekelle", lat: 13.4967, lon: 39.4697 },
+    { name: "Gondar", lat: 12.603, lon: 37.4521 },
+    { name: "Bahir Dar", lat: 11.5742, lon: 37.3614 },
+    { name: "Hawassa", lat: 7.0504, lon: 38.4955 },
+    { name: "Jimma", lat: 7.6667, lon: 36.8333 },
+    { name: "Adama", lat: 8.541, lon: 39.27 },
+    { name: "Harar", lat: 9.3131, lon: 42.115 },
+    { name: "Sodo", lat: 6.85, lon: 37.75 },
+    { name: "Dessie", lat: 11.1333, lon: 39.6333 },
+    { name: "Debre Markos", lat: 10.3333, lon: 37.7167 },
+    { name: "Aksum", lat: 14.13, lon: 38.72 },
+    { name: "Bishoftu", lat: 8.75, lon: 38.9833 },
+    { name: "Arba Minch", lat: 6.0167, lon: 37.55 },
+    { name: "Nekemte", lat: 9.0893, lon: 36.54 },
+    { name: "Asosa", lat: 10.0671, lon: 34.5229 },
+    { name: "Debre Birhan", lat: 9.6792, lon: 39.5321 },
+    { name: "Jijiga", lat: 9.35, lon: 42.8 },
+    { name: "Ambo", lat: 8.9833, lon: 37.85 },
+  ];
+
+  // Select a random Ethiopian city
+  const selectedCity =
+    ethiopianCities[Math.floor(Math.random() * ethiopianCities.length)];
+
+  // Add a small random offset (±0.01 degrees) to avoid exact city center coordinates each time
+  const latOffset = faker.datatype.float({
+    min: -0.01,
+    max: 0.01,
+    precision: 0.000001,
+  });
+  const lonOffset = faker.datatype.float({
+    min: -0.01,
+    max: 0.01,
+    precision: 0.000001,
+  });
+
   // Generate normal sensor data
   const normalData = {
     acceleration: {
@@ -74,21 +114,15 @@ const generateSensorData = (forceAccident = false) => {
       yaw: faker.datatype.float({ min: -10, max: 10 }),
     },
     gps: {
-      // Ethiopia's latitude range: approximately 3.5°N to 14.9°N
-      latitude: faker.datatype.float({
-        min: 3.5,
-        max: 14.9,
-        precision: 0.000001,
-      }),
-      // Ethiopia's longitude range: approximately 33°E to 48°E
-      longitude: faker.datatype.float({
-        min: 33.0,
-        max: 48.0,
-        precision: 0.000001,
-      }),
+      // Use the selected Ethiopian city's coordinates with slight offset
+      latitude: selectedCity.lat + latOffset,
+      longitude: selectedCity.lon + lonOffset,
       speed: faker.datatype.float({ min: 0, max: 120 }), // km/h
     },
   };
+
+  // Store the city name in a custom property for use by getAddress
+  normalData.gps.cityName = selectedCity.name;
 
   // If forcing accident, modify values to trigger detection
   if (forceAccident) {
@@ -138,7 +172,75 @@ const generateSensorData = (forceAccident = false) => {
  */
 const getAddress = async (latitude, longitude) => {
   try {
-    // Set up geocoder options to prefer English or Amharic results
+    // Define Ethiopian regions with their Amharic names (in English characters)
+    const ethiopianRegions = {
+      "Addis Ababa": "Addis Ababa",
+      "Dire Dawa": "Dire Dawa",
+      Mekelle: "Tigray Region",
+      Gondar: "Amhara Region",
+      "Bahir Dar": "Amhara Region",
+      Hawassa: "Sidama Region",
+      Jimma: "Oromia Region",
+      Adama: "Oromia Region",
+      Harar: "Harari Region",
+      Sodo: "Southern Nations, Nationalities, and Peoples' Region",
+      Dessie: "Amhara Region",
+      "Debre Markos": "Amhara Region",
+      Aksum: "Tigray Region",
+      Bishoftu: "Oromia Region",
+      "Arba Minch": "Southern Nations, Nationalities, and Peoples' Region",
+      Nekemte: "Oromia Region",
+      Asosa: "Benishangul-Gumuz Region",
+      "Debre Birhan": "Amhara Region",
+      Jijiga: "Somali Region",
+      Ambo: "Oromia Region",
+    };
+
+    // Ethiopian street name patterns for realistic addresses
+    const ethiopianStreetPatterns = [
+      "Bole Road",
+      "Churchill Avenue",
+      "Menelik II Avenue",
+      "Africa Avenue",
+      "Ras Mekonnen Street",
+      "Haile Selassie Avenue",
+      "Ethiopia Street",
+      "Unity Road",
+      "Meskel Square Road",
+      "Ethio-China Street",
+      "National Theater Road",
+      "Stadium Road",
+      "Main Street",
+      "Market Road",
+      "University Road",
+      "Hospital Street",
+    ];
+
+    // Find closest city by coordinates
+    const ethiopianCities = [
+      { name: "Addis Ababa", lat: 9.0222, lon: 38.7468 },
+      { name: "Dire Dawa", lat: 9.5931, lon: 41.8661 },
+      { name: "Mekelle", lat: 13.4967, lon: 39.4697 },
+      { name: "Gondar", lat: 12.603, lon: 37.4521 },
+      { name: "Bahir Dar", lat: 11.5742, lon: 37.3614 },
+      { name: "Hawassa", lat: 7.0504, lon: 38.4955 },
+      { name: "Jimma", lat: 7.6667, lon: 36.8333 },
+      { name: "Adama", lat: 8.541, lon: 39.27 },
+      { name: "Harar", lat: 9.3131, lon: 42.115 },
+      { name: "Sodo", lat: 6.85, lon: 37.75 },
+      { name: "Dessie", lat: 11.1333, lon: 39.6333 },
+      { name: "Debre Markos", lat: 10.3333, lon: 37.7167 },
+      { name: "Aksum", lat: 14.13, lon: 38.72 },
+      { name: "Bishoftu", lat: 8.75, lon: 38.9833 },
+      { name: "Arba Minch", lat: 6.0167, lon: 37.55 },
+      { name: "Nekemte", lat: 9.0893, lon: 36.54 },
+      { name: "Asosa", lat: 10.0671, lon: 34.5229 },
+      { name: "Debre Birhan", lat: 9.6792, lon: 39.5321 },
+      { name: "Jijiga", lat: 9.35, lon: 42.8 },
+      { name: "Ambo", lat: 8.9833, lon: 37.85 },
+    ];
+
+    // Try to use geocoder first
     const geocoderInstance = NodeGeocoder({
       ...options,
       language: "en", // Prefer English results
@@ -149,111 +251,56 @@ const getAddress = async (latitude, longitude) => {
       lon: longitude,
     });
 
-    if (res && res.length > 0) {
-      // Extract address components
+    // If geocoding worked and returned Ethiopia, use it
+    if (res && res.length > 0 && res[0].country === "Ethiopia") {
       const addressObj = res[0];
 
-      // Create a custom address format for Ethiopia
       let formattedAddress = "";
 
-      // Check if we have building/street details
       if (addressObj.streetName) {
         formattedAddress += addressObj.streetName;
       }
 
-      // Add neighborhood/suburb if available
-      if (addressObj.neighbourhood || addressObj.suburb) {
+      if (addressObj.city) {
         if (formattedAddress) formattedAddress += ", ";
-        formattedAddress += addressObj.neighbourhood || addressObj.suburb;
+        formattedAddress += addressObj.city;
       }
 
-      // Add city/town
-      if (addressObj.city || addressObj.town || addressObj.state) {
-        if (formattedAddress) formattedAddress += ", ";
-        formattedAddress +=
-          addressObj.city || addressObj.town || addressObj.state;
-      }
-
-      // Add country
-      if (addressObj.country) {
-        if (formattedAddress) formattedAddress += ", ";
-        formattedAddress += "Ethiopia";
-      }
-
-      // If we still don't have a proper address, use a default Ethiopian format
-      if (!formattedAddress || formattedAddress === "Ethiopia") {
-        // Default to major cities in Ethiopia based on approximate coordinates
-        if (
-          latitude > 8.9 &&
-          latitude < 9.1 &&
-          longitude > 38.7 &&
-          longitude < 38.8
-        ) {
-          formattedAddress = "Addis Ababa, Ethiopia";
-        } else if (
-          latitude > 11.5 &&
-          latitude < 11.7 &&
-          longitude > 37.3 &&
-          longitude < 37.5
-        ) {
-          formattedAddress = "Bahir Dar, Ethiopia";
-        } else if (
-          latitude > 9.3 &&
-          latitude < 9.5 &&
-          longitude > 42.1 &&
-          longitude < 42.2
-        ) {
-          formattedAddress = "Harar, Ethiopia";
-        } else if (
-          latitude > 11.5 &&
-          latitude < 11.7 &&
-          longitude > 39.4 &&
-          longitude < 39.6
-        ) {
-          formattedAddress = "Dessie, Ethiopia";
-        } else if (
-          latitude > 13.4 &&
-          latitude < 13.6 &&
-          longitude > 39.4 &&
-          longitude < 39.6
-        ) {
-          formattedAddress = "Mekelle, Ethiopia";
-        } else if (
-          latitude > 7.0 &&
-          latitude < 7.1 &&
-          longitude > 38.4 &&
-          longitude < 38.5
-        ) {
-          formattedAddress = "Hawassa, Ethiopia";
-        } else if (
-          latitude > 9.6 &&
-          latitude < 9.7 &&
-          longitude > 41.8 &&
-          longitude < 41.9
-        ) {
-          formattedAddress = "Dire Dawa, Ethiopia";
-        } else if (
-          latitude > 7.6 &&
-          latitude < 7.7 &&
-          longitude > 36.8 &&
-          longitude < 36.9
-        ) {
-          formattedAddress = "Jimma, Ethiopia";
-        } else {
-          // For other locations, create a generic Ethiopian address
-          formattedAddress = `Location in Ethiopia (${latitude.toFixed(
-            4
-          )}, ${longitude.toFixed(4)})`;
-        }
-      }
+      if (formattedAddress) formattedAddress += ", ";
+      formattedAddress += "Ethiopia";
 
       return formattedAddress;
     }
-    return "Address in Ethiopia";
+
+    // Fallback to creating a realistic Ethiopian address
+    // Find closest city
+    let closestCity = ethiopianCities[0];
+    let minDistance = Number.MAX_VALUE;
+
+    ethiopianCities.forEach((city) => {
+      const distance = Math.sqrt(
+        Math.pow(city.lat - latitude, 2) + Math.pow(city.lon - longitude, 2)
+      );
+
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestCity = city;
+      }
+    });
+
+    // Create realistic address
+    const streetName =
+      ethiopianStreetPatterns[
+        Math.floor(Math.random() * ethiopianStreetPatterns.length)
+      ];
+    const buildingNumber = Math.floor(Math.random() * 1000) + 1;
+    const region = ethiopianRegions[closestCity.name] || "Ethiopia";
+
+    return `${buildingNumber} ${streetName}, ${closestCity.name}, ${region}, Ethiopia`;
   } catch (error) {
     console.error("Geocoding error:", error);
     // Return a default Ethiopian location if geocoding fails
-    return "Unknown location in Ethiopia";
+    return "Bole Road, Addis Ababa, Ethiopia";
   }
 };
 
