@@ -3,11 +3,11 @@ import {
   NavigationMenuItem,
   NavigationMenuList,
 } from "@radix-ui/react-navigation-menu";
-import { Car, AlertTriangle } from "lucide-react";
+import { Car, AlertTriangle, Hospital } from "lucide-react";
 
 interface SidebarProps {
-  onTabChange: (tab: "vehicles" | "accidents") => void;
-  activeTab: "vehicles" | "accidents";
+  onTabChange: (tab: "vehicles" | "accidents" | "hospitals") => void;
+  activeTab: "vehicles" | "accidents" | "hospitals";
 }
 
 export const Sidebar = ({ onTabChange, activeTab }: SidebarProps) => {
@@ -47,6 +47,19 @@ export const Sidebar = ({ onTabChange, activeTab }: SidebarProps) => {
               >
                 <Car size={20} />
                 <span>Vehicles</span>
+              </button>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <button
+                onClick={() => onTabChange("hospitals")}
+                className={`flex items-center gap-2 w-full p-2 rounded-lg ${
+                  activeTab === "hospitals"
+                    ? "bg-blue-900/20 text-blue-500"
+                    : "hover:bg-gray-800 text-white"
+                }`}
+              >
+                <Hospital size={20} />
+                <span>Hospitals</span>
               </button>
             </NavigationMenuItem>
           </NavigationMenuList>

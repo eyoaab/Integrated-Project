@@ -9,6 +9,32 @@ interface DashboardLayoutProps {
   onAddVehicle?: () => void;
 }
 
+const getTabInfo = (tab: TabType) => {
+  switch (tab) {
+    case "vehicles":
+      return {
+        title: "Vehicles",
+        description:
+          "Monitor and manage all vehicles in the emergency response network",
+      };
+    case "accidents":
+      return {
+        title: "Active Accidents",
+        description: "Real-time accident monitoring and response",
+      };
+    case "hospitals":
+      return {
+        title: "Hospitals",
+        description: "Manage and monitor hospital network and resources",
+      };
+    default:
+      return {
+        title: "",
+        description: "",
+      };
+  }
+};
+
 export const DashboardLayout = ({
   children,
   activeTab,
@@ -23,12 +49,10 @@ export const DashboardLayout = ({
           <div className="flex items-center gap-6 justify-between">
             <div>
               <h1 className="text-2xl font-bold text-white">
-                {activeTab === "vehicles" ? "Vehicles" : "Active Accidents"}
+                {getTabInfo(activeTab).title}
               </h1>
               <p className="text-gray-400 mt-2">
-                {activeTab === "vehicles"
-                  ? "Monitor and manage all vehicles in the emergency response network"
-                  : "Real-time accident monitoring and response"}
+                {getTabInfo(activeTab).description}
               </p>
             </div>
             {activeTab === "vehicles" && onAddVehicle && (

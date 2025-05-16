@@ -2,6 +2,7 @@ import { useState } from "react";
 import { DashboardLayout } from "./layouts/DashboardLayout";
 import { VehiclesPage } from "./pages/Vehicles";
 import { AccidentsPage } from "./pages/Accidents";
+import { HospitalsPage } from "./pages/Hospitals";
 import type { TabType } from "./types";
 
 export default function App() {
@@ -19,8 +20,10 @@ export default function App() {
           isAddDialogOpen={isAddVehicleOpen}
           onAddDialogClose={() => setIsAddVehicleOpen(false)}
         />
-      ) : (
+      ) : activeTab === "accidents" ? (
         <AccidentsPage />
+      ) : (
+        <HospitalsPage />
       )}
     </DashboardLayout>
   );

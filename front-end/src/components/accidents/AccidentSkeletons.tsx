@@ -3,7 +3,6 @@ export const AccidentTableSkeleton = () => (
     <table className="w-full">
       <thead>
         <tr className="bg-[#252525] text-gray-400 text-sm">
-          <th className="px-6 py-4 text-left">Status</th>
           <th className="px-6 py-4 text-left">Location</th>
           <th className="px-6 py-4 text-left">Time</th>
           <th className="px-6 py-4 text-left">Vehicle ID</th>
@@ -36,9 +35,9 @@ export const AccidentTableSkeleton = () => (
                 <div className="w-16 h-4 bg-gray-600 rounded" />
               </div>
             </td>
-            <td className="px-6 py-4 text-right">
+            {/* <td className="px-6 py-4 text-right">
               <div className="w-24 h-8 bg-gray-600 rounded-md ml-auto" />
-            </td>
+            </td> */}
           </tr>
         ))}
       </tbody>
