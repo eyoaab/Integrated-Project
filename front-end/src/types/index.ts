@@ -45,4 +45,12 @@ export type Accident = {
   updatedAt: string;
 };
 
+export interface NearbyHospital {
+  id: string;
+  name: string;
+  lat: number;
+  lon: number;
+  distance: number;
+}
+
 export type TabType = "vehicles" | "accidents";

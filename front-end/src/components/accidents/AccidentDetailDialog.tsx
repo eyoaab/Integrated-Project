@@ -6,22 +6,16 @@ import {
   Clock,
   Car,
   Hospital,
+  Maximize2,
 } from "lucide-react";
 import { useState, useEffect } from "react";
-import type { Accident } from "../../types";
+import type { Accident, NearbyHospital } from "../../types";
+import { FullMapDialog } from "./FullMapDialog";
 
 interface AccidentDetailDialogProps {
   accident: Accident | null;
   isOpen: boolean;
   onClose: () => void;
-}
-
-interface NearbyHospital {
-  id: string;
-  name: string;
-  lat: number;
-  lon: number;
-  distance: number;
 }
 
 // Add CSS for custom scrollbar
@@ -50,6 +44,7 @@ export const AccidentDetailDialog = ({
   const [nearbyHospitals, setNearbyHospitals] = useState<NearbyHospital[]>([]);
   const [isLoadingHospitals, setIsLoadingHospitals] = useState(false);
   const [hospitalError, setHospitalError] = useState<string | null>(null);
+  const [isFullMapOpen, setIsFullMapOpen] = useState(false);
 
   // Add the CSS to the document
   useEffect(() => {
@@ -225,7 +220,17 @@ export const AccidentDetailDialog = ({
                   </div>
                 </div>
                 <div className="relative">
-                  <div className="mt-2 h-48 bg-gray-800 rounded-lg overflow-hidden">
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="text-sm text-gray-400">Map</span>
+                    <button
+                      onClick={() => setIsFullMapOpen(true)}
+                      className="flex items-center gap-1 text-xs text-blue-400 hover:text-blue-300"
+                    >
+                      <Maximize2 className="w-3 h-3" />
+                      Full Map
+                    </button>
+                  </div>
+                  <div className="mt-1 h-48 bg-gray-800 rounded-lg overflow-hidden">
                     <iframe
                       title="Accident Location"
                       width="100%"
@@ -377,6 +382,14 @@ export const AccidentDetailDialog = ({
           </div>
         </Dialog.Content>
       </Dialog.Portal>
+
+      {/* Full Map Dialog */}
+      <FullMapDialog
+        accident={accident}
+        isOpen={isFullMapOpen}
+        onClose={() => setIsFullMapOpen(false)}
+        hospitalMarkers={hospitalMarkers}
+      />
     </Dialog.Root>
   );
 };

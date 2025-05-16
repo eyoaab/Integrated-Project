@@ -31,6 +31,11 @@ const swaggerDefinition = {
       name: "Accidents",
       description: "API endpoints for accident data and emergency response",
     },
+    {
+      name: "Hospitals",
+      description:
+        "API endpoints for hospital management and finding nearby emergency facilities",
+    },
   ],
   components: {
     schemas: {
@@ -142,6 +147,75 @@ const swaggerDefinition = {
             enum: ["Pending", "Notified"],
             description: "Current status of the emergency response",
             example: "Notified",
+          },
+          createdAt: {
+            type: "string",
+            format: "date-time",
+          },
+          updatedAt: {
+            type: "string",
+            format: "date-time",
+          },
+        },
+      },
+      Hospital: {
+        type: "object",
+        required: [
+          "name",
+          "availableBeds",
+          "location_name",
+          "location",
+          "specialities",
+          "phoneNumber",
+        ],
+        properties: {
+          _id: {
+            type: "string",
+            description: "MongoDB unique identifier",
+            example: "60d21b4667d0d8992e610c85",
+          },
+          name: {
+            type: "string",
+            description: "Name of the hospital",
+            example: "Tikur Anbessa Specialized Hospital",
+          },
+          availableBeds: {
+            type: "integer",
+            description: "Number of available beds",
+            example: 120,
+          },
+          location_name: {
+            type: "string",
+            description: "Human-readable location name",
+            example: "Addis Ababa, Kirkos Sub-City",
+          },
+          location: {
+            type: "object",
+            properties: {
+              latitude: {
+                type: "number",
+                description: "Latitude coordinate",
+                example: 9.0222,
+              },
+              longitude: {
+                type: "number",
+                description: "Longitude coordinate",
+                example: 38.7468,
+              },
+            },
+          },
+          specialities: {
+            type: "array",
+            description: "Medical specialities available at the hospital",
+            items: {
+              type: "string",
+            },
+            example: ["Cardiology", "Emergency", "Surgery", "Pediatrics"],
+          },
+          phoneNumber: {
+            type: "string",
+            description: "Contact phone number",
+            example: "+251111234567",
           },
           createdAt: {
             type: "string",
