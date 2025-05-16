@@ -3,6 +3,7 @@ import { DashboardLayout } from "./layouts/DashboardLayout";
 import { VehiclesPage } from "./pages/Vehicles";
 import { AccidentsPage } from "./pages/Accidents";
 import { HospitalsPage } from "./pages/Hospitals";
+import { EmergencyPage } from "./pages/Emergency";
 import type { TabType } from "./types";
 
 export default function App() {
@@ -22,8 +23,10 @@ export default function App() {
         />
       ) : activeTab === "accidents" ? (
         <AccidentsPage />
-      ) : (
+      ) : activeTab === "hospitals" ? (
         <HospitalsPage />
+      ) : (
+        <EmergencyPage />
       )}
     </DashboardLayout>
   );

@@ -27,6 +27,11 @@ const getTabInfo = (tab: TabType) => {
         title: "Hospitals",
         description: "Manage and monitor hospital network and resources",
       };
+    case "emergency":
+      return {
+        title: "Emergency Contacts",
+        description: "Access critical emergency response contacts and services",
+      };
     default:
       return {
         title: "",

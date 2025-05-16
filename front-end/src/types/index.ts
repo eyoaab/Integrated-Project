@@ -53,7 +53,7 @@ export interface NearbyHospital {
   distance: number;
 }
 
-export type TabType = "vehicles" | "accidents" | "hospitals";
+export type TabType = "vehicles" | "accidents" | "hospitals" | "emergency";
 
 export interface Hospital {
   _id: string;
@@ -66,6 +66,18 @@ export interface Hospital {
     latitude: number;
     longitude: number;
   };
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface EmergencyContact {
+  _id: string;
+  name: string;
+  role: string;
+  office_type: string;
+  email: string;
+  phone: string;
+  office_name: string;
   createdAt: string;
   updatedAt: string;
 }
