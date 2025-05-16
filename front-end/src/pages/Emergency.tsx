@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { toast, Toaster } from "sonner";
-import { Mail, Phone, Building2, UserCircle } from "lucide-react";
+import { Mail, Phone, Building2, UserCircle, Plus } from "lucide-react";
 import type { EmergencyContact } from "../types";
+import { AddEmergencyDialog } from "../components/emergency/AddEmergencyDialog";
 
 export const EmergencyPage = () => {
   const [contacts, setContacts] = useState<EmergencyContact[]>([]);
@@ -9,6 +10,7 @@ export const EmergencyPage = () => {
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedOfficeType, setSelectedOfficeType] = useState<string>("all");
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
   const officeTypes = [
     "all",
@@ -100,7 +102,7 @@ export const EmergencyPage = () => {
       <Toaster position="top-right" richColors />
 
       {/* Search and Filter Section */}
-      <div className="flex items-center gap-4 mb-6 justify-between">
+      <div className="flex items-center justify-between gap-4 mb-6">
         <input
           type="text"
           placeholder="Search contacts..."
@@ -108,17 +110,26 @@ export const EmergencyPage = () => {
           onChange={(e) => setSearchTerm(e.target.value)}
           className="w-72 px-4 py-2 bg-[#1E1E1E] rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
         />
-        <select
-          value={selectedOfficeType}
-          onChange={(e) => setSelectedOfficeType(e.target.value)}
-          className="px-4 py-2 bg-[#1E1E1E] rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500 cursor-pointer"
-        >
-          {officeTypes.map((type) => (
-            <option key={type} value={type}>
-              {type === "all" ? "All Office Types" : type}
-            </option>
-          ))}
-        </select>
+        <div className="flex items-center gap-4">
+          <select
+            value={selectedOfficeType}
+            onChange={(e) => setSelectedOfficeType(e.target.value)}
+            className="px-4 py-2 bg-[#1E1E1E] rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500 cursor-pointer"
+          >
+            {officeTypes.map((type) => (
+              <option key={type} value={type}>
+                {type === "all" ? "All Office Types" : type}
+              </option>
+            ))}
+          </select>
+          <button
+            onClick={() => setIsAddDialogOpen(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors"
+          >
+            <Plus className="w-4 h-4" />
+            Add Contact
+          </button>
+        </div>
       </div>
 
       {/* Contacts Grid */}
@@ -188,6 +199,13 @@ export const EmergencyPage = () => {
           </div>
         ))}
       </div>
+
+      {/* Add Emergency Dialog */}
+      <AddEmergencyDialog
+        isOpen={isAddDialogOpen}
+        onClose={() => setIsAddDialogOpen(false)}
+        onSuccess={fetchContacts}
+      />
     </div>
   );
 };
