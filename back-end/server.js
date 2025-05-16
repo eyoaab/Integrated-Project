@@ -9,6 +9,7 @@ const swaggerSpec = require("./swagger");
 const vehicleRoutes = require("./routes/vehicleRoutes");
 const accidentRoutes = require("./routes/accidentRoutes");
 const hospitalRoutes = require("./routes/hospitalRoutes");
+const emergencyOfficeRoutes = require("./routes/emergencyOfficeRoutes");
 const cors = require("cors");
 
 // Load environment variables
@@ -42,6 +43,7 @@ app.get("/api-docs.json", (req, res) => {
 app.use("/api", vehicleRoutes);
 app.use("/api", accidentRoutes);
 app.use("/api", hospitalRoutes);
+app.use("/api", emergencyOfficeRoutes);
 
 // Connect to MongoDB
 const MONGODB_URI =

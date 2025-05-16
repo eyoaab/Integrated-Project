@@ -36,6 +36,11 @@ const swaggerDefinition = {
       description:
         "API endpoints for hospital management and finding nearby emergency facilities",
     },
+    {
+      name: "Emergency Offices",
+      description:
+        "API endpoints for managing emergency response offices and coordination centers",
+    },
   ],
   components: {
     schemas: {
@@ -216,6 +221,62 @@ const swaggerDefinition = {
             type: "string",
             description: "Contact phone number",
             example: "+251111234567",
+          },
+          createdAt: {
+            type: "string",
+            format: "date-time",
+          },
+          updatedAt: {
+            type: "string",
+            format: "date-time",
+          },
+        },
+      },
+      EmergencyOffice: {
+        type: "object",
+        required: [
+          "name",
+          "role",
+          "office_type",
+          "email",
+          "phone",
+          "office_name",
+        ],
+        properties: {
+          _id: {
+            type: "string",
+            description: "MongoDB unique identifier",
+            example: "60d21b4667d0d8992e610c86",
+          },
+          name: {
+            type: "string",
+            description: "Name of the emergency office contact person",
+            example: "John Doe",
+          },
+          role: {
+            type: "string",
+            description: "Role of the contact person",
+            example: "Emergency Coordinator",
+          },
+          office_type: {
+            type: "string",
+            description: "Type of emergency office",
+            example: "Fire Department",
+          },
+          email: {
+            type: "string",
+            description: "Email address of the office",
+            example: "emergency@addisfd.gov.et",
+          },
+          phone: {
+            type: "string",
+            description: "Contact phone number",
+            example: "+251911234567",
+          },
+          office_name: {
+            type: "string",
+            description: "Official name of the emergency office",
+            example: "Addis Ababa Fire Department",
           },
           createdAt: {
             type: "string",
