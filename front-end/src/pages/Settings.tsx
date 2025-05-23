@@ -44,45 +44,54 @@ export const Settings = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#1E1E1E] text-white">
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="flex flex-col gap-6">
-          {/* Header */}
+    <div>
+      {/* Header Section */}
+      <div className="p-8">
+        <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-semibold text-white">Settings</h1>
-            <p className="text-gray-400">Manage your account preferences</p>
+            <h1 className="text-2xl font-bold text-white">Settings</h1>
+            <p className="text-gray-400 mt-2">
+              Manage your account settings and configure system preferences
+            </p>
           </div>
+        </div>
+      </div>
 
-          {/* Tabs */}
-          <div className="flex gap-2 border-b border-[#252525] pb-4">
-            <TabButton
-              active={activeTab === "general"}
-              onClick={() => setActiveTab("general")}
-            >
-              General
-            </TabButton>
-            <TabButton
-              active={activeTab === "account"}
-              onClick={() => setActiveTab("account")}
-            >
-              Account
-            </TabButton>
-            <TabButton
-              active={activeTab === "notification"}
-              onClick={() => setActiveTab("notification")}
-            >
-              Notification
-            </TabButton>
-            <TabButton
-              active={activeTab === "security"}
-              onClick={() => setActiveTab("security")}
-            >
-              Security
-            </TabButton>
+      {/* Main Content */}
+      <div className="px-8 pb-8">
+        <div className="bg-[#1E1E1E] rounded-lg p-6">
+          <div className="flex flex-col gap-6">
+            {/* Tabs */}
+            <div className="flex gap-2 border-b border-[#252525] pb-4">
+              <TabButton
+                active={activeTab === "general"}
+                onClick={() => setActiveTab("general")}
+              >
+                General
+              </TabButton>
+              <TabButton
+                active={activeTab === "account"}
+                onClick={() => setActiveTab("account")}
+              >
+                Account
+              </TabButton>
+              <TabButton
+                active={activeTab === "notification"}
+                onClick={() => setActiveTab("notification")}
+              >
+                Notification
+              </TabButton>
+              <TabButton
+                active={activeTab === "security"}
+                onClick={() => setActiveTab("security")}
+              >
+                Security
+              </TabButton>
+            </div>
+
+            {/* Content */}
+            <div>{renderContent()}</div>
           </div>
-
-          {/* Content */}
-          <div>{renderContent()}</div>
         </div>
       </div>
     </div>
