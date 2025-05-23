@@ -3,7 +3,17 @@ import {
   NavigationMenuItem,
   NavigationMenuList,
 } from "@radix-ui/react-navigation-menu";
-import { Car, AlertTriangle, Hospital, Phone } from "lucide-react";
+import {
+  AlertTriangle,
+  Car,
+  Hospital,
+  MessageSquare,
+  History,
+  Settings,
+  FileText,
+  User,
+} from "lucide-react";
+import { useAuth } from "../hooks/useAuth";
 
 interface SidebarProps {
   onTabChange: (
@@ -13,15 +23,13 @@ interface SidebarProps {
 }
 
 export const Sidebar = ({ onTabChange, activeTab }: SidebarProps) => {
-  return (
-    <div className="sticky top-0 h-screen w-64 bg-[#1a1a1a] p-4 flex flex-col overflow-y-auto">
-      <div className="flex items-center gap-2 mb-8">
-        <span className="text-xl font-semibold text-white">
-          Emergency Dashboard
-        </span>
-      </div>
+  const { getUser, logout } = useAuth();
+  const user = getUser();
 
-      <div className="space-y-2">
+  return (
+    <div className="sticky top-0 h-screen w-64 bg-[#1a1a1a] p-4 flex flex-col">
+      {/* Main Section */}
+      <div className="space-y-2 flex-1">
         <h2 className="text-sm text-gray-400 mb-4">Main</h2>
         <NavigationMenu>
           <NavigationMenuList className="space-y-2">
@@ -40,19 +48,6 @@ export const Sidebar = ({ onTabChange, activeTab }: SidebarProps) => {
             </NavigationMenuItem>
             <NavigationMenuItem>
               <button
-                onClick={() => onTabChange("vehicles")}
-                className={`flex items-center gap-2 w-full p-2 rounded-lg ${
-                  activeTab === "vehicles"
-                    ? "bg-blue-900/20 text-blue-500"
-                    : "hover:bg-gray-800 text-white"
-                }`}
-              >
-                <Car size={20} />
-                <span>Vehicles</span>
-              </button>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <button
                 onClick={() => onTabChange("hospitals")}
                 className={`flex items-center gap-2 w-full p-2 rounded-lg ${
                   activeTab === "hospitals"
@@ -66,6 +61,32 @@ export const Sidebar = ({ onTabChange, activeTab }: SidebarProps) => {
             </NavigationMenuItem>
             <NavigationMenuItem>
               <button
+                onClick={() => onTabChange("vehicles")}
+                className={`flex items-center gap-2 w-full p-2 rounded-lg ${
+                  activeTab === "vehicles"
+                    ? "bg-[#252525] text-white"
+                    : "hover:bg-gray-800 text-white"
+                }`}
+              >
+                <Car size={20} />
+                <span>Vehicles</span>
+              </button>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <button className="flex items-center gap-2 w-full p-2 rounded-lg hover:bg-gray-800 text-white">
+                <FileText size={20} />
+                <span>Reports</span>
+              </button>
+            </NavigationMenuItem>
+          </NavigationMenuList>
+        </NavigationMenu>
+
+        {/* Management Section */}
+        <h2 className="text-sm text-gray-400 mb-4 mt-8">Management</h2>
+        <NavigationMenu>
+          <NavigationMenuList className="space-y-2">
+            <NavigationMenuItem>
+              <button
                 onClick={() => onTabChange("emergency")}
                 className={`flex items-center gap-2 w-full p-2 rounded-lg ${
                   activeTab === "emergency"
@@ -73,12 +94,37 @@ export const Sidebar = ({ onTabChange, activeTab }: SidebarProps) => {
                     : "hover:bg-gray-800 text-white"
                 }`}
               >
-                <Phone size={20} />
+                <MessageSquare size={20} />
                 <span>Emergency Contacts</span>
+              </button>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <button className="flex items-center gap-2 w-full p-2 rounded-lg hover:bg-gray-800 text-white">
+                <History size={20} />
+                <span>History</span>
+              </button>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <button className="flex items-center gap-2 w-full p-2 rounded-lg hover:bg-gray-800 text-white">
+                <Settings size={20} />
+                <span>Settings</span>
               </button>
             </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
+      </div>
+
+      {/* Admin Account Section */}
+      <div className="pt-4 border-t border-gray-800">
+        <div className="flex items-center gap-3 p-2">
+          <div className="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center">
+            <User size={20} className="text-gray-400" />
+          </div>
+          <div className="flex-1">
+            <p className="text-sm text-white">Dispatch Officer</p>
+            <p className="text-xs text-gray-400">{user?.email}</p>
+          </div>
+        </div>
       </div>
     </div>
   );

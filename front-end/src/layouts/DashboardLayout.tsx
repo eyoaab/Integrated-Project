@@ -51,7 +51,7 @@ export const DashboardLayout = ({
       <Sidebar activeTab={activeTab} onTabChange={onTabChange} />
       <main className="flex-1 flex flex-col">
         <div className="p-8">
-          <div className="flex items-center gap-6 justify-between">
+          <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-white">
                 {getTabInfo(activeTab).title}
