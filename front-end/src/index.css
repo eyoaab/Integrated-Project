@@ -2,48 +2,27 @@
 
 @layer base {
   :root {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
-
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
-
-    --primary: 0 0% 98%;
-    --primary-foreground: 240 5.9% 10%;
-
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 240 4.9% 83.9%;
-
-    --radius: 0.5rem;
+    --background: #ffffff;
+    --surface: #f3f4f6;
+    --border: #e5e7eb;
+    --text: #111827;
+    --text-secondary: #4b5563;
   }
-}
 
-@layer base {
-  * {
-    border-color: hsl(var(--border));
+  .dark {
+    --background: #121212;
+    --surface: #1e1e1e;
+    --border: #2e2e2e;
+    --text: #ffffff;
+    --text-secondary: #9ca3af;
   }
+
   body {
     margin: 0;
     min-width: 320px;
     min-height: 100vh;
-    background-color: hsl(var(--background));
-    color: hsl(var(--foreground));
+    background-color: var(--background);
+    color: var(--text);
     font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
     line-height: 1.5;
     font-weight: 400;
@@ -62,13 +41,13 @@
     font-size: 1em;
     font-weight: 500;
     font-family: inherit;
-    background-color: hsl(var(--secondary));
+    background-color: var(--surface);
     cursor: pointer;
     transition: border-color 0.25s;
   }
 
   .btn:hover {
-    border-color: hsl(var(--accent));
+    border-color: var(--border);
   }
 
   .btn:focus,
@@ -80,11 +59,11 @@
 @layer utilities {
   .link {
     font-weight: 500;
-    color: hsl(var(--accent));
+    color: var(--text);
     text-decoration: inherit;
   }
 
   .link:hover {
-    color: hsl(var(--accent-foreground));
+    color: var(--text-secondary);
   }
 }

@@ -1,20 +1,21 @@
 import { useState } from "react";
 import { Globe, Save } from "lucide-react";
+import { useTheme } from "../../contexts/ThemeContext";
+import { toast } from "sonner";
 
 export const GeneralSettings = () => {
-  const [theme, setTheme] = useState<"light" | "dark" | "system">("dark");
+  const { theme, setTheme } = useTheme();
   const [language, setLanguage] = useState("English");
   const [autoDispatch, setAutoDispatch] = useState(false);
   const [refreshRate, setRefreshRate] = useState("Every 5 Seconds");
 
   const handleSave = () => {
-    // TODO: Implement settings save functionality
-    console.log("Saving settings:", {
-      theme,
-      language,
-      autoDispatch,
-      refreshRate,
-    });
+    // Save settings
+    localStorage.setItem("language", language);
+    localStorage.setItem("autoDispatch", String(autoDispatch));
+    localStorage.setItem("refreshRate", refreshRate);
+
+    toast.success("Settings saved successfully");
   };
 
   return (
@@ -25,9 +26,9 @@ export const GeneralSettings = () => {
         <div className="flex gap-2">
           <button
             onClick={() => setTheme("light")}
-            className={`px-4 py-2 rounded-md text-sm ${
+            className={`px-4 py-2 rounded-md text-sm transition-colors ${
               theme === "light"
-                ? "bg-white text-black"
+                ? "bg-blue-600 text-white"
                 : "bg-[#252525] text-white hover:bg-[#303030]"
             }`}
           >
@@ -35,9 +36,9 @@ export const GeneralSettings = () => {
           </button>
           <button
             onClick={() => setTheme("dark")}
-            className={`px-4 py-2 rounded-md text-sm ${
+            className={`px-4 py-2 rounded-md text-sm transition-colors ${
               theme === "dark"
-                ? "bg-white text-black"
+                ? "bg-blue-600 text-white"
                 : "bg-[#252525] text-white hover:bg-[#303030]"
             }`}
           >
@@ -45,9 +46,9 @@ export const GeneralSettings = () => {
           </button>
           <button
             onClick={() => setTheme("system")}
-            className={`px-4 py-2 rounded-md text-sm ${
+            className={`px-4 py-2 rounded-md text-sm transition-colors ${
               theme === "system"
-                ? "bg-white text-black"
+                ? "bg-blue-600 text-white"
                 : "bg-[#252525] text-white hover:bg-[#303030]"
             }`}
           >
