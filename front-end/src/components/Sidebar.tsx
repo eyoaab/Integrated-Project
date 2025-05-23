@@ -14,12 +14,11 @@ import {
   User,
 } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
+import type { TabType } from "../types";
 
 interface SidebarProps {
-  onTabChange: (
-    tab: "vehicles" | "accidents" | "hospitals" | "emergency"
-  ) => void;
-  activeTab: "vehicles" | "accidents" | "hospitals" | "emergency";
+  onTabChange: (tab: TabType) => void;
+  activeTab: TabType;
 }
 
 export const Sidebar = ({ onTabChange, activeTab }: SidebarProps) => {
@@ -73,7 +72,14 @@ export const Sidebar = ({ onTabChange, activeTab }: SidebarProps) => {
               </button>
             </NavigationMenuItem>
             <NavigationMenuItem>
-              <button className="flex items-center gap-2 w-full p-2 rounded-lg hover:bg-gray-800 text-white">
+              <button
+                onClick={() => onTabChange("reports")}
+                className={`flex items-center gap-2 w-full p-2 rounded-lg ${
+                  activeTab === "reports"
+                    ? "bg-green-900/20 text-green-500"
+                    : "hover:bg-gray-800 text-white"
+                }`}
+              >
                 <FileText size={20} />
                 <span>Reports</span>
               </button>

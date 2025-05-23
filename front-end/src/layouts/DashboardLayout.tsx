@@ -32,6 +32,12 @@ const getTabInfo = (tab: TabType) => {
         title: "Emergency Contacts",
         description: "Access critical emergency response contacts and services",
       };
+    case "reports":
+      return {
+        title: "Reports",
+        description:
+          "View and generate reports for emergency response activities",
+      };
     default:
       return {
         title: "",

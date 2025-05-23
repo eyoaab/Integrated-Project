@@ -5,6 +5,7 @@ import { VehiclesPage } from "./pages/Vehicles";
 import { AccidentsPage } from "./pages/Accidents";
 import { HospitalsPage } from "./pages/Hospitals";
 import { EmergencyPage } from "./pages/Emergency";
+import { ReportsPage } from "./pages/Reports";
 import { LoginPage } from "./pages/Login";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 import type { TabType } from "./types";
@@ -28,8 +29,10 @@ const Dashboard = () => {
         <AccidentsPage />
       ) : activeTab === "hospitals" ? (
         <HospitalsPage />
-      ) : (
+      ) : activeTab === "emergency" ? (
         <EmergencyPage />
+      ) : (
+        <ReportsPage />
       )}
     </DashboardLayout>
   );
