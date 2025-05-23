@@ -9,7 +9,7 @@ import {
   Hospital,
   MessageSquare,
   History,
-  Settings,
+  Settings as SettingsIcon,
   FileText,
   User,
 } from "lucide-react";
@@ -111,9 +111,16 @@ export const Sidebar = ({ onTabChange, activeTab }: SidebarProps) => {
               </button>
             </NavigationMenuItem>
             <NavigationMenuItem>
-              <button className="flex items-center gap-2 w-full p-2 rounded-lg hover:bg-gray-800 text-white">
-                <Settings size={20} />
-                <span>Settings</span>
+              <button
+                onClick={() => onTabChange("settings")}
+                className={`flex items-center gap-3 w-full px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                  activeTab === "settings"
+                    ? "bg-[#1E1E1E] text-white"
+                    : "text-gray-400 hover:text-white hover:bg-[#252525]"
+                }`}
+              >
+                <SettingsIcon className="w-4 h-4" />
+                Settings
               </button>
             </NavigationMenuItem>
           </NavigationMenuList>

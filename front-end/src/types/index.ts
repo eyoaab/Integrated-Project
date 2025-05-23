@@ -58,7 +58,8 @@ export type TabType =
   | "accidents"
   | "hospitals"
   | "emergency"
-  | "reports";
+  | "reports"
+  | "settings";
 
 export interface Hospital {
   _id: string;

@@ -9,6 +9,7 @@ import { ReportsPage } from "./pages/Reports";
 import { LoginPage } from "./pages/Login";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 import type { TabType } from "./types";
+import { Settings } from "./pages/Settings";
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState<TabType>("accidents");
@@ -31,6 +32,8 @@ const Dashboard = () => {
         <HospitalsPage />
       ) : activeTab === "emergency" ? (
         <EmergencyPage />
+      ) : activeTab === "settings" ? (
+        <Settings />
       ) : (
         <ReportsPage />
       )}
