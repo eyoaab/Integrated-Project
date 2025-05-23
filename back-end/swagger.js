@@ -41,6 +41,10 @@ const swaggerDefinition = {
       description:
         "API endpoints for managing emergency response offices and coordination centers",
     },
+    {
+      name: "Users",
+      description: "API endpoints for user management and authentication",
+    },
   ],
   components: {
     schemas: {
@@ -277,6 +281,35 @@ const swaggerDefinition = {
             type: "string",
             description: "Official name of the emergency office",
             example: "Addis Ababa Fire Department",
+          },
+          createdAt: {
+            type: "string",
+            format: "date-time",
+          },
+          updatedAt: {
+            type: "string",
+            format: "date-time",
+          },
+        },
+      },
+      User: {
+        type: "object",
+        required: ["fullname", "email", "password"],
+        properties: {
+          _id: {
+            type: "string",
+            description: "MongoDB unique identifier",
+            example: "60d21b4667d0d8992e610c87",
+          },
+          fullname: {
+            type: "string",
+            description: "Full name of the user",
+            example: "John Doe",
+          },
+          email: {
+            type: "string",
+            description: "User's email address",
+            example: "john.doe@example.com",
           },
           createdAt: {
             type: "string",

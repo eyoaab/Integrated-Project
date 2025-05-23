@@ -10,6 +10,7 @@ const vehicleRoutes = require("./routes/vehicleRoutes");
 const accidentRoutes = require("./routes/accidentRoutes");
 const hospitalRoutes = require("./routes/hospitalRoutes");
 const emergencyOfficeRoutes = require("./routes/emergencyOfficeRoutes");
+const userRoutes = require("./routes/userRoutes");
 const cors = require("cors");
 
 // Load environment variables
@@ -44,6 +45,7 @@ app.use("/api", vehicleRoutes);
 app.use("/api", accidentRoutes);
 app.use("/api", hospitalRoutes);
 app.use("/api", emergencyOfficeRoutes);
+app.use("/api", userRoutes);
 
 // Connect to MongoDB
 const MONGODB_URI =
