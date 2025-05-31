@@ -22,7 +22,7 @@ interface SidebarProps {
 }
 
 export const Sidebar = ({ onTabChange, activeTab }: SidebarProps) => {
-  const { getUser, logout } = useAuth();
+  const { getUser } = useAuth();
   const user = getUser();
 
   return (
